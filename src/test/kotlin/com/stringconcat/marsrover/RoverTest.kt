@@ -1,46 +1,55 @@
 package com.stringconcat.marsrover
 
 import com.stringconcat.marsrover.Direction.*
+import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withData
 import io.kotest.matchers.shouldBe
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
-import javax.swing.text.html.HTML.Attribute.N
 
-class RoverTest {
+class RoverTest : FunSpec({
 
-    @Test
-    fun `when rover stays on a coordinate then it can return the same coordinate`() {
+    context("when rover stays on a coordinate then it can return the same coordinate") {
         val rover = Rover(3, 4, NORTH)
         rover.coordinate shouldBe Coordinate(3, 4)
         rover.direction shouldBe NORTH
     }
 
-    @Test
-    fun `when rover moves then it moves forward`() {
-        val rover = Rover(0, 0, NORTH)
-        rover.move()
-
-        rover.coordinate shouldBe Coordinate(0, 1)
-        rover.direction shouldBe NORTH
-
-        val rover2 = Rover(1, 1, SOUTH)
-        rover2.move()
-
-        rover2.coordinate shouldBe Coordinate(1, 0)
-        rover2.direction shouldBe SOUTH
+    context("when rover moves then it moves forward") {
+        withData(
+            Pair(Coordinate(5, 6), NORTH),
+            Pair(Coordinate(6, 5), EAST),
+            Pair(Coordinate(5, 4), SOUTH),
+            Pair(Coordinate(4, 5), WEST)
+        ) { (expectedCoordinate, direction) ->
+            val rover = Rover(5, 5, direction)
+            rover.move()
+            rover.coordinate shouldBe expectedCoordinate
+            rover.direction shouldBe direction
+        }
     }
 
-    @Test
-    fun `when north rover turn left then the direction is West`() {
-        val rover = Rover(0, 0, NORTH)
-        rover.turnLeft()
-        rover.direction shouldBe WEST
+    context("when rover turns left then it turns left") {
+        withData(
+            Pair(NORTH, WEST),
+            Pair(EAST, NORTH),
+            Pair(SOUTH, EAST),
+            Pair(WEST, SOUTH)
+        ) { (startDirection, expectedDirection) ->
+            val rover = Rover(0, 0, startDirection)
+            rover.turnLeft()
+            rover.direction shouldBe expectedDirection
+        }
     }
 
-    @Test
-    fun `when south rover turn left then the direction is East`() {
-        val rover = Rover(0, 0, SOUTH)
-        rover.turnLeft()
-        rover.direction shouldBe EAST
+    context("when rover turns right then it turns right") {
+        withData(
+            Pair(NORTH, EAST),
+            Pair(EAST, SOUTH),
+            Pair(SOUTH, WEST),
+            Pair(WEST, NORTH)
+        ) { (startDirection, expectedDirection) ->
+            val rover = Rover(0, 0, startDirection)
+            rover.turnRight()
+            rover.direction shouldBe expectedDirection
+        }
     }
-}
+})

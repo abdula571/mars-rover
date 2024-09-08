@@ -4,10 +4,12 @@ data class Coordinate(
     val x: Int,
     val y: Int
 ) {
-    fun incX(): Coordinate {
-        return Coordinate(x.inc(), y)
+    init {
+        if(x < 0 || y < 0) {
+            throw InvalidCoordinateException()
+        }
     }
-
+    fun incX() = Coordinate(x.inc(), y)
     fun decX() = Coordinate(x.dec(), y)
     fun incY() = Coordinate(x, y.inc())
     fun decY() = Coordinate(x, y.dec())
